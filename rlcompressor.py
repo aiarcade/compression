@@ -2,10 +2,16 @@
 import numpy as np
 import cPickle as pickle
 import fic 
+import matplotlib.image as mpimg
+from scipy import ndimage
+import numpy as np
+import math
+import os
+from skimage import transform
 
 # hyperparameters
 H = 200 # number of hidden layer neurons
-batch_size = 10 # every how many episodes to do a param update?
+batch_size = 2 # every how many episodes to do a param update?
 learning_rate = 1e-4
 gamma = 0.99 # discount factor for reward
 decay_rate = 0.99 # decay factor for RMSProp leaky sum of grad^2
@@ -87,7 +93,7 @@ while True:
   dlogps.append(y - aprob) # grad that encourages the action that was taken to be taken (see http://cs231n.github.io/neural-networks-2/#losses if confused)
 
   # step the environment and get new measurements
-  observation, reward, done, info = env.step(action)
+  observation, reward, done, info,over = env.step(action)
   #print observation, reward, done, info 
   reward_sum += reward
 	
@@ -127,10 +133,21 @@ while True:
     # boring book-keeping
     running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
     print 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
-    if episode_number % 100 == 0: pickle.dump(model, open('save.p', 'wb'))
+    #if episode_number % 100 == 0: pickle.dump(model, open('save.p', 'wb'))
     reward_sum = 0
     observation = env.reset() # reset env
     prev_x = None
 
   if reward != 0: # Pong has either +1 or -1 reward exactly when game ends.
     print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
+
+  if over is True:
+    break
+while True:
+  print "Enter an image name"
+  img=raw_input()
+  observation = transform.resize(mpimg.imread(img),(128,128))
+  aprob, h = policy_forward(x)
+  action = 2 if np.random.uniform() < aprob else 3 # roll the dice!
+  print action
+
