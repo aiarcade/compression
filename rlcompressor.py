@@ -94,7 +94,8 @@ while True:
 
   # step the environment and get new measurements
   observation, reward, done, info,over = env.step(action)
-  #print observation, reward, done, info 
+	
+  print reward, done, info ,over
   reward_sum += reward
 	
 	
