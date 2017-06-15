@@ -88,6 +88,9 @@ venv/
 ENV/
 data/
 data2/
+category1/
+category2/
+
 # Spyder project settings
 .spyderproject
 .spyproject

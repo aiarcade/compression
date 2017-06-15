@@ -9,9 +9,11 @@ import math
 import os
 from skimage import transform
 
+
+
 # hyperparameters
 H = 200 # number of hidden layer neurons
-batch_size = 2 # every how many episodes to do a param update?
+batch_size = 5 # every how many episodes to do a param update?
 learning_rate = 1e-4
 gamma = 0.99 # discount factor for reward
 decay_rate = 0.99 # decay factor for RMSProp leaky sum of grad^2
@@ -95,11 +97,11 @@ while True:
   # step the environment and get new measurements
   observation, reward, done, info,over = env.step(action)
 	
-  print reward, done, info ,over
+  #print reward, done, info ,over
   reward_sum += reward
 	
 	
-  print reward_sum
+  
   drs.append(reward) # record reward (has to be done after we call step() to get reward for previous action)
 
   
@@ -146,9 +148,10 @@ while True:
     break
 while True:
   print "Enter an image name"
+  
   img=raw_input()
   observation = transform.resize(mpimg.imread(img),(128,128))
   aprob, h = policy_forward(x)
   action = 2 if np.random.uniform() < aprob else 3 # roll the dice!
-  print action
+  print action,aprob
 

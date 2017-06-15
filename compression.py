@@ -6,6 +6,7 @@ import numpy as np
 import math
 from skimage import measure
 import sys
+import timeit
 # Manipulate channels
 
 def get_greyscale_image(img):
@@ -67,8 +68,12 @@ def generate_all_transformed_blocks(img, source_size, destination_size, step):
 	return transformed_blocks
 
 def compress(img, source_size, destination_size, step):
+	start_time = timeit.default_timer()
 	transforms = []
 	transformed_blocks = generate_all_transformed_blocks(img, source_size, destination_size, step)
+	
+	print "Transform gen",start_time - timeit.default_timer()
+	start_time = timeit.default_timer()
 	print "Transforms",len(transformed_blocks)
 	for i in range(img.shape[0] // destination_size):
 		transforms.append([])
@@ -86,6 +91,8 @@ def compress(img, source_size, destination_size, step):
 				if d < min_d:
 					min_d = d
 					transforms[i][j] = (k, l, direction, angle, contrast, brightness)
+	print "selection",start_time - timeit.default_timer()
+	start_time = timeit.default_timer()	
 	return transforms
 
 def decompress(transforms, source_size, destination_size, step, nb_iter=8):
@@ -163,7 +170,7 @@ def test_greyscale(file_name):
 	
 	plt.figure()
 	plt.imshow(img, cmap='gray', interpolation='none')
-	import timeit
+	
 	start_time = timeit.default_timer()
 	
 	
